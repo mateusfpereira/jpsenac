@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackathon Social Inclusivo - Jovem Programadora</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            overflow: hidden;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+        }
+        
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* Custom Scrollbar for notes */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #818cf8, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+	@media print {
+            body { 
+                overflow: visible !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
+            #slides-container { 
+                height: auto !important; 
+                display: block !important; 
+            }
+            .slide {
+                display: flex !important;
+                opacity: 1 !important;
+                position: relative !important;
+                height: 100vh !important;
+                page-break-after: always;
+                break-after: page;
+            }
+            /* Oculta a interface de navegação e botões na impressão */
+            button, .absolute.top-0 { 
+                display: none !important; 
+            }
+        }
+    </style>
+</head>
+<body class="h-screen w-screen relative">
+
+    <!-- Progress Bar -->
+    <div class="absolute top-0 left-0 h-1 bg-slate-800 w-full z-50">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 to-pink-500 w-0 transition-all duration-300"></div>
+    </div>
+
+    <!-- Navigation Controls (Top Right) -->
+    <div class="absolute top-4 right-4 z-50 flex gap-4">
+        <button onclick="toggleFullscreen()" class="text-slate-400 hover:text-white transition" title="Tela Cheia">
+            <i class="fas fa-expand text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Slides Container -->
+    <div id="slides-container" class="h-full w-full relative">
+
+        <!-- Slide 1: Capa -->
+        <div class="slide active flex-col justify-center items-center h-full w-full bg-[url('https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center">
+            <div class="absolute inset-0 bg-slate-900/80"></div>
+            <div class="relative z-10 text-center px-4 max-w-5xl">
+                <div class="inline-block px-4 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 mb-6 font-semibold tracking-wide">
+                    UNIDADE CURRICULAR 5
+                </div>
+                <h1 class="text-6xl md:text-8xl font-bold mb-6 gradient-text">Jornada da Inovação Inclusiva</h1>
+                <p class="text-3xl text-slate-300 mb-12">O Hackathon Social: Ideação</p>
+                <div class="animate-bounce text-slate-400 mt-12">
+                    <p class="mb-2 text-sm">Pressione a seta para a direita <i class="fas fa-arrow-right ml-1"></i></p>
+                </div>
+            </div>
+            
+            <!-- Notes Toggle -->
+            <div class="absolute bottom-6 right-6 z-20">
+                <button onclick="toggleNotes('notes-1')" class="bg-slate-800 hover:bg-slate-700 text-white p-3 rounded-full shadow-lg transition">
+                    <i class="fas fa-lightbulb text-yellow-400"></i>
+                </button>
+            </div>
+            <!-- Notes Content -->
+            <div id="notes-1" class="hidden absolute bottom-20 right-6 w-96 glass-panel p-6 rounded-xl shadow-2xl z-20 text-left">
+                <h3 class="text-pink-400 font-bold mb-2"><i class="fas fa-comment-dots mr-2"></i>Fala do Professor:</h3>
+                <p class="text-sm text-slate-300">"Boa tarde, programadoras! Na última aula, nos inspiramos com Estrelas Além do Tempo. Vimos que a tecnologia precisa de mentes diversas. Hoje, a responsabilidade é de vocês. Saiam do papel de espectadoras e assumam o papel de criadoras do futuro. Bem-vindas ao nosso Hackathon Social!"</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Provocação -->
+        <div class="slide flex-col justify-center items-center h-full w-full p-12">
+            <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-5xl font-bold mb-6 text-white">O que <span class="gradient-text">Dorothy Vaughan</span> faria?</h2>
+                    <ul class="space-y-6 text-2xl text-slate-300">
+                        <li class="flex items-start">
+                            <i class="fas fa-robot text-indigo-400 mt-1 mr-4"></i>
+                            <span>A máquina da IBM ia substituir as mulheres. Ela <strong>aprendeu a programar</strong>.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-users text-pink-400 mt-1 mr-4"></i>
+                            <span>Ela não fez isso sozinha. Ela garantiu que <strong>ninguém ficasse para trás</strong>.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="rounded-2xl overflow-hidden shadow-2xl border border-slate-700 relative">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 to-transparent mix-blend-overlay"></div>
+                    <img src="https://www.eldorado.org.br/wp-content/uploads/2021/03/Dorothy-Vaughan.png" alt="Dorothy Vaughan" class="w-full h-96 object-cover object-center">
+                </div>
+            </div>
+
+            <div class="absolute bottom-6 right-6 z-20">
+                <button onclick="toggleNotes('notes-2')" class="bg-slate-800 hover:bg-slate-700 text-white p-3 rounded-full shadow-lg transition">
+                    <i class="fas fa-lightbulb text-yellow-400"></i>
+                </button>
+            </div>
+            <div id="notes-2" class="hidden absolute bottom-20 right-6 w-96 glass-panel p-6 rounded-xl shadow-2xl z-20">
+                <h3 class="text-pink-400 font-bold mb-2"><i class="fas fa-comment-dots mr-2"></i>Fala do Professor:</h3>
+                <p class="text-sm text-slate-300">"E se a dona Maria de 70 anos não conseguir usar um app de banco? E se uma pessoa cega não conseguir pedir comida? Criar tecnologia sem acessibilidade é deixar pessoas para trás. Hoje vocês vão usar a tecnologia para incluir."</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Cases -->
+        <div class="slide flex-col justify-center items-center h-full w-full p-12">
+            <h2 class="text-5xl font-bold mb-4 text-center">Impacto Social <span class="gradient-text">Dá Lucro!</span></h2>
+            <p class="text-xl text-slate-400 mb-12 text-center">Acessibilidade não é favor, é inovação e mercado.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
+                <!-- Case 1 -->
+                <div class="glass-panel p-8 rounded-2xl text-center transform hover:-translate-y-2 transition-transform duration-300 border-t-4 border-t-blue-500">
+                    <div class="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-400 text-4xl">
+                        <i class="fas fa-sign-language"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Hand Talk</h3>
+                    <p class="text-slate-300">Avatar com IA que traduz textos e áudios para Libras. Fatura milhões tornando sites acessíveis.</p>
+                </div>
+                <!-- Case 2 -->
+                <div class="glass-panel p-8 rounded-2xl text-center transform hover:-translate-y-2 transition-transform duration-300 border-t-4 border-t-indigo-500">
+                    <div class="w-20 h-20 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-indigo-400 text-4xl">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Be My Eyes</h3>
+                    <p class="text-slate-300">Conecta pessoas cegas por vídeo a voluntários. Autonomia visual que atrai investimentos globais.</p>
+                </div>
+            </div>
+
+            <div class="absolute bottom-6 right-6 z-20">
+                <button onclick="toggleNotes('notes-3')" class="bg-slate-800 hover:bg-slate-700 text-white p-3 rounded-full shadow-lg transition">
+                    <i class="fas fa-lightbulb text-yellow-400"></i>
+                </button>
+            </div>
+            <div id="notes-3" class="hidden absolute bottom-20 right-6 w-96 glass-panel p-6 rounded-xl shadow-2xl z-20">
+                <h3 class="text-pink-400 font-bold mb-2"><i class="fas fa-comment-dots mr-2"></i>Fala do Professor:</h3>
+                <p class="text-sm text-slate-300">"Muitos acham que acessibilidade é só caridade. O mercado prova o contrário. Soluções inclusivas resolvem problemas reais e geram muito valor financeiro. É isso que vocês vão desenhar hoje."</p>
+            </div>
+        </div>
+
+        <!-- NEW Slide 4: Startup -->
+        <div class="slide flex-col justify-center items-center h-full w-full p-12 text-center">
+            <h2 class="text-6xl font-bold mb-8 gradient-text">Hoje vocês vão fundar uma startup.</h2>
+            <div class="glass-panel p-12 rounded-3xl border border-indigo-500/30">
+                <i class="fas fa-users text-7xl text-pink-500 mb-8"></i>
+                <h3 class="text-4xl font-bold text-white mb-4">Grupos de 5 meninas</h3>
+                <p class="text-xl text-slate-300">O momento de unir talentos e transformar ideias em impacto social começa agora.</p>
+            </div>
+
+            <div class="absolute bottom-6 right-6 z-20">
+                <button onclick="toggleNotes('notes-4')" class="bg-slate-800 hover:bg-slate-700 text-white p-3 rounded-full shadow-lg transition">
+                    <i class="fas fa-lightbulb text-yellow-400"></i>
+                </button>
+            </div>
+            <div id="notes-4" class="hidden absolute bottom-20 right-6 w-96 glass-panel p-6 rounded-xl shadow-2xl z-20 text-left">
+                <h3 class="text-pink-400 font-bold mb-2"><i class="fas fa-comment-dots mr-2"></i>Fala do Professor:</h3>
+                <p class="text-sm text-slate-300">"Formem os grupos agora! Misturem habilidades: quem gosta de design, quem prefere código, quem é boa de comunicação. O time diverso é o primeiro passo para o sucesso da startup."</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Role Playing -->
+        <div class="slide flex-col justify-center items-center h-full w-full p-12">
+            <h2 class="text-5xl font-bold mb-4 text-center">Sua <span class="gradient-text">Identidade Corporativa</span></h2>
+            <p class="text-xl text-slate-400 mb-10 text-center">Escolha seu cargo e aja como a profissional da área!</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 w-full max-w-7xl">
+                <div class="glass-panel p-6 rounded-xl hover:bg-slate-800/80 transition">
+                    <i class="fas fa-briefcase text-3xl text-yellow-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">CEO</h3>
+                    <p class="text-sm text-slate-400">Lidera o time e garante que o projeto foque em resolver o <strong>problema social real</strong>.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl hover:bg-slate-800/80 transition">
+                    <i class="fas fa-code text-3xl text-blue-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Desenvolvedora</h3>
+                    <p class="text-sm text-slate-400">Define a lógica tecnológica (GPS, IA, Câmera) e defende a <strong>viabilidade técnica</strong>.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl hover:bg-slate-800/80 transition">
+                    <i class="fas fa-palette text-3xl text-pink-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">UX/UI Designer</h3>
+                    <p class="text-sm text-slate-400">Exige e projeta o coração inclusivo: telas, cores e os <strong>recursos de acessibilidade</strong>.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl hover:bg-slate-800/80 transition">
+                    <i class="fas fa-bullhorn text-3xl text-purple-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Marketing</h3>
+                    <p class="text-sm text-slate-400">Cria o nome, marca e a estratégia para <strong>alcançar quem mais precisa</strong> da solução.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl hover:bg-slate-800/80 transition">
+                    <i class="fas fa-headset text-3xl text-green-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Customer Success</h3>
+                    <p class="text-sm text-slate-400">Estrutura o <strong>suporte humanizado</strong> focado nas dificuldades do usuário.</p>
+                </div>
+            </div>
+
+            <div class="absolute bottom-6 right-6 z-20">
+                <button onclick="toggleNotes('notes-5')" class="bg-slate-800 hover:bg-slate-700 text-white p-3 rounded-full shadow-lg transition">
+                    <i class="fas fa-lightbulb text-yellow-400"></i>
+                </button>
+            </div>
+            <div id="notes-5" class="hidden absolute bottom-20 right-6 w-96 glass-panel p-6 rounded-xl shadow-2xl z-20">
+                <h3 class="text-pink-400 font-bold mb-2"><i class="fas fa-comment-dots mr-2"></i>Fala do Professor:</h3>
+                <p class="text-sm text-slate-300">"Cada uma de vocês DEVE assumir um desses cargos agora. Se a CEO sugerir algo mirabolante, a Dev tem que questionar a viabilidade, e a UX tem que lembrar de quem tem deficiência."</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Madrinha -->
+        <div class="slide flex-col justify-center items-center h-full w-full p-12">
+            <div class="max-w-5xl w-full text-center">
+                <div class="inline-block px-6 py-2 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 mb-6 font-bold text-xl">
+                    <i class="fas fa-star mr-2"></i> REGRA DE OURO
+                </div>
+                <h2 class="text-5xl font-bold mb-8 text-white">Homenagem <span class="gradient-text">Histórica</span></h2>
+                
+                <p class="text-2xl text-slate-300 mb-10 leading-relaxed">
+                    O nome da startup (ou app) de vocês DEVE homenagear uma <strong>mulher real</strong> da história da ciência ou tecnologia.
+                </p>
+
+                <div class="flex justify-center gap-6 mb-10 opacity-70">
+                    <span class="bg-slate-800 px-4 py-2 rounded-lg font-mono">Ada Lovelace</span>
+                    <span class="bg-slate-800 px-4 py-2 rounded-lg font-mono">Grace Hopper</span>
+                    <span class="bg-slate-800 px-4 py-2 rounded-lg font-mono">Margaret Hamilton</span>
+                    <span class="bg-slate-800 px-4 py-2 rounded-lg font-mono">Nina da Hora</span>
+                </div>
+
+                <div class="glass-panel p-8 rounded-2xl inline-block text-left border-l-4 border-l-pink-500">
+                    <h4 class="font-bold text-xl mb-2 text-white">A Missão da CEO:</h4>
+                    <p class="text-slate-300">No dia do Pitch, a CEO terá <strong>30 segundos</strong> no início da apresentação para explicar quem foi essa mulher e por que a escolheram como Madrinha.</p>
+                </div>
+            </div>
+
+            <div class="absolute bottom-6 right-6 z-20">
+                <button onclick="toggleNotes('notes-6')" class="bg-slate-800 hover:bg-slate-700 text-white p-3 rounded-full shadow-lg transition">
+                    <i class="fas fa-lightbulb text-yellow-400"></i>
+                </button>
+            </div>
+            <div id="notes-6" class="hidden absolute bottom-20 right-6 w-96 glass-panel p-6 rounded-xl shadow-2xl z-20">
+                <h3 class="text-pink-400 font-bold mb-2"><i class="fas fa-comment-dots mr-2"></i>Fala do Professor:</h3>
+                <p class="text-sm text-slate-300">"Usem os primeiros 15 minutos do desafio para pesquisar no celular. Encontrem a madrinha da empresa de vocês antes de começarem a desenhar o aplicativo."</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Pitch Deck -->
+        <div class="slide flex-col justify-center items-center h-full w-full p-12">
+            <h2 class="text-5xl font-bold mb-4 text-center">Preparando o <span class="gradient-text">Pitch Deck</span></h2>
+            <p class="text-xl text-slate-400 mb-10 text-center">O que vocês precisam ter desenhado para o "Demoday" da próxima aula.</p>
+            
+            <div class="max-w-4xl w-full bg-slate-800/50 p-8 rounded-2xl border border-slate-700 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                
+                <ol class="space-y-6 text-xl text-slate-200 relative z-10 font-light">
+                    <li class="flex items-center"><span class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold mr-4 shrink-0">1</span> <strong>A Capa:</strong> Nome da Startup (Madrinha), Slogan e Cargos do Time.</li>
+                    <li class="flex items-center"><span class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold mr-4 shrink-0">2</span> <strong>A Dor:</strong> Qual o problema social real vocês estão resolvendo?</li>
+                    <li class="flex items-center"><span class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold mr-4 shrink-0">3</span> <strong>A Solução Tecnológica:</strong> Como o aplicativo/site resolve isso?</li>
+                    <li class="flex items-center bg-pink-500/10 p-4 rounded-xl border border-pink-500/30"><span class="w-10 h-10 rounded-full bg-pink-500 flex items-center justify-center font-bold mr-4 shrink-0 shadow-[0_0_15px_rgba(236,72,153,0.5)]">4</span> <strong>O Coração Inclusivo (UC5):</strong> Mínimo de 1 recurso de Acessibilidade.</li>
+                    <li class="flex items-center"><span class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold mr-4 shrink-0">5</span> <strong>O Futuro:</strong> Como a startup se sustenta? Quem paga a conta?</li>
+                </ol>
+            </div>
+            
+            <p class="mt-8 text-yellow-400 font-bold"><i class="fas fa-exclamation-triangle mr-2"></i> Pelo menos TRÊS alunas do grupo precisam falar na apresentação!</p>
+
+            <div class="absolute bottom-6 right-6 z-20">
+                <button onclick="toggleNotes('notes-7')" class="bg-slate-800 hover:bg-slate-700 text-white p-3 rounded-full shadow-lg transition">
+                    <i class="fas fa-lightbulb text-yellow-400"></i>
+                </button>
+            </div>
+            <div id="notes-7" class="hidden absolute bottom-20 right-6 w-96 glass-panel p-6 rounded-xl shadow-2xl z-20">
+                <h3 class="text-pink-400 font-bold mb-2"><i class="fas fa-comment-dots mr-2"></i>Fala do Professor:</h3>
+                <p class="text-sm text-slate-300">"Tirem foto deste slide! Esse é o checklist de entrega de vocês. Vocês terão 5 minutos de palco na próxima aula para vender essa ideia para nós."</p>
+            </div>
+        </div>
+
+        <!-- NEW Slide 8: Estrutura em 3 Aulas -->
+        <div class="slide flex-col justify-center items-center h-full w-full p-12 text-center">
+            <h2 class="text-5xl font-bold mb-12 gradient-text">Proposta de Estrutura</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
+                <div class="glass-panel p-8 rounded-2xl border border-indigo-500/30">
+                    <i class="fas fa-users text-4xl text-indigo-400 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-white mb-4">Aula 1</h3>
+                    <p class="text-lg text-slate-300">Imersão, Empatia e Identidade<br><span class="text-indigo-400">(O Problema)</span></p>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl border border-pink-500/30">
+                    <i class="fas fa-code text-4xl text-pink-400 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-white mb-4">Aula 2</h3>
+                    <p class="text-lg text-slate-300">Desenvolvimento e O "Coração Inclusivo"<br><span class="text-pink-400">(A Solução)</span></p>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl border border-yellow-500/30">
+                    <i class="fas fa-rocket text-4xl text-yellow-400 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-white mb-4">Aula 3</h3>
+                    <p class="text-lg text-slate-300">Pitch Deck e "Demoday"<br><span class="text-yellow-400">(A Entrega)</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Cronômetro Mão na Massa -->
+        <div class="slide flex-col justify-center items-center h-full w-full p-12 bg-[#020617]">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)]"></div>
+            
+            <h1 class="text-7xl md:text-9xl font-bold mb-8 gradient-text tracking-wider z-10 text-center uppercase" style="font-family: monospace;">
+                Mão na Massa
+            </h1>
+            
+            <div class="glass-panel p-12 rounded-3xl z-10 flex flex-col items-center border-t-8 border-indigo-500 shadow-[0_0_50px_rgba(99,102,241,0.2)]">
+                <div id="timer-display" class="text-8xl md:text-[10rem] font-bold text-white mb-8" style="font-variant-numeric: tabular-nums;">
+                    75:00
+                </div>
+                
+                <div class="flex gap-6">
+                    <button id="btn-start" onclick="startTimer()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-xl font-bold text-xl transition shadow-lg shadow-indigo-600/30 flex items-center gap-3">
+                        <i class="fas fa-play"></i> Iniciar Hackathon
+                    </button>
+                    <button id="btn-pause" onclick="pauseTimer()" class="hidden bg-slate-700 hover:bg-slate-600 text-white px-8 py-4 rounded-xl font-bold text-xl transition flex items-center gap-3">
+                        <i class="fas fa-pause"></i> Pausar
+                    </button>
+                    <button onclick="resetTimer()" class="bg-transparent border-2 border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white px-6 py-4 rounded-xl font-bold text-xl transition">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <p class="mt-12 text-slate-400 text-xl z-10 animate-pulse"><i class="fas fa-music mr-2"></i> Professor, coloque uma playlist lofi de fundo!</p>
+        </div>
+
+    </div>
+
+    <!-- Navigation Arrows -->
+    <button id="prevBtn" onclick="prevSlide()" class="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full glass-panel flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700/80 transition z-50">
+        <i class="fas fa-chevron-left text-2xl"></i>
+    </button>
+    <button id="nextBtn" onclick="nextSlide()" class="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full glass-panel flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700/80 transition z-50">
+        <i class="fas fa-chevron-right text-2xl"></i>
+    </button>
+
+    <script>
+        // --- Slide Navigation Logic ---
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                if(index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            
+            // Update Progress Bar
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            // Hide/Show arrows
+            document.getElementById('prevBtn').style.display = currentSlide === 0 ? 'none' : 'flex';
+            document.getElementById('nextBtn').style.display = currentSlide === slides.length - 1 ? 'none' : 'flex';
+            
+            // Hide all open notes when changing slides
+            document.querySelectorAll('[id^="notes-"]').forEach(note => note.classList.add('hidden'));
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initialize
+        updateSlides();
+
+        // --- Speaker Notes Logic ---
+        function toggleNotes(id) {
+            const noteDiv = document.getElementById(id);
+            if(noteDiv.classList.contains('hidden')) {
+                // Hide all others first
+                document.querySelectorAll('[id^="notes-"]').forEach(n => n.classList.add('hidden'));
+                noteDiv.classList.remove('hidden');
+            } else {
+                noteDiv.classList.add('hidden');
+            }
+        }
+
+        // --- Fullscreen Logic ---
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // --- Timer Logic (75 minutes) ---
+        let timeInSeconds = 75 * 60; 
+        let timerInterval;
+        let isRunning = false;
+        const defaultTime = 75 * 60;
+
+        const display = document.getElementById('timer-display');
+        const startBtn = document.getElementById('btn-start');
+        const pauseBtn = document.getElementById('btn-pause');
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = timeInSeconds % 60;
+            display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Color changes as time runs out
+            if(timeInSeconds <= 15 * 60 && timeInSeconds > 5 * 60) {
+                display.classList.remove('text-white', 'text-red-500');
+                display.classList.add('text-yellow-400');
+            } else if (timeInSeconds <= 5 * 60) {
+                display.classList.remove('text-yellow-400');
+                display.classList.add('text-red-500');
+            } else {
+                display.classList.remove('text-yellow-400', 'text-red-500');
+                display.classList.add('text-white');
+            }
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                startBtn.classList.add('hidden');
+                pauseBtn.classList.remove('hidden');
+                
+                timerInterval = setInterval(() => {
+                    if (timeInSeconds > 0) {
+                        timeInSeconds--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        display.classList.add('animate-ping'); // Visual alert when done
+                        setTimeout(() => display.classList.remove('animate-ping'), 5000);
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            startBtn.classList.remove('hidden');
+            pauseBtn.classList.add('hidden');
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Continuar';
+        }
+
+        function resetTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            timeInSeconds = defaultTime;
+            updateTimerDisplay();
+            startBtn.classList.remove('hidden');
+            pauseBtn.classList.add('hidden');
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar Hackathon';
+        }
+    </script>
+</body>
+</html>
